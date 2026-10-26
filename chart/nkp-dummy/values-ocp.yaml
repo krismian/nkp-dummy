@@ -1,0 +1,5 @@
+config:
+  PLATFORM: openshift
+
+route:
+  enabled: true

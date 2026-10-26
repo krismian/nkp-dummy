@@ -1,0 +1,7 @@
+config:
+  PLATFORM: nkp
+
+ingress:
+  enabled: true
+  # Cocokkan dengan `kubectl get ingressclass` di cluster NKP.
+  className: kommander-traefik
