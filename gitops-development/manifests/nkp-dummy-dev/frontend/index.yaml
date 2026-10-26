@@ -1,0 +1,22 @@
+argocdNamespace: openshift-gitops
+project: nkp-dummy-dev
+app: nkp-dummy
+layer: frontend
+
+helm:
+  repoURL: https://github.com/krismian/nkp-dummy.git
+  targetRevision: main
+  pathPrefix: helm-development
+
+sites:
+  lab:
+    server: https://kubernetes.default.svc
+  nkp:
+    name: nkp-poc
+
+services:
+  - name: nkp-dummy-web
+    environments:
+      - name: develop
+        sites:
+          - lab

@@ -7,3 +7,4 @@ projects:
     description: Dummy migrasi OCP ke NKP
     layers:
       - backend
+      - frontend

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "web.fullname" . }}
+  labels:
+    {{- include "web.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.common.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "web.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "web.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.common.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.common.image.repository }}:{{ .Values.common.image.tag }}"
+          imagePullPolicy: {{ .Values.common.image.pullPolicy }}
+          env:
+            - name: BACKEND_URL
+              value: {{ .Values.common.backendURL | quote }}
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            {{- toYaml .Values.common.resources | nindent 12 }}

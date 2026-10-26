@@ -1,0 +1,6 @@
+route:
+  enabled: false
+
+ingress:
+  enabled: true
+  className: kommander-traefik

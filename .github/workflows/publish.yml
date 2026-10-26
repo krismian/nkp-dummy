@@ -13,13 +13,20 @@ permissions:
 jobs:
   image:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: nkp-dummy
+            file: Dockerfile
+          - name: nkp-dummy-web
+            file: Dockerfile.web
     steps:
       - uses: actions/checkout@v4
 
       - id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/nkp-dummy
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}
           tags: |
             type=ref,event=tag
             type=sha,format=long,prefix=
@@ -36,6 +43,7 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: .
+          file: ${{ matrix.file }}
           push: true
           provenance: false
           sbom: false

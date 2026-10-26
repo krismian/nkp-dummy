@@ -1,0 +1,6 @@
+apiVersion: v2
+name: nkp-dummy-web
+description: Frontend nkp-dummy, pola layer frontend korporat
+type: application
+version: 0.1.0
+appVersion: "v0.3.0"
