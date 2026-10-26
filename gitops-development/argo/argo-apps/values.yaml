@@ -1,0 +1,16 @@
+argocdNamespace: openshift-gitops
+repoURL: https://github.com/krismian/nkp-dummy.git
+targetRevision: main
+
+apps:
+  - name: projects-development
+    path: gitops-development/manifests
+  - name: credential-credential
+    project: credential
+    path: gitops-development/manifests/credential/credential
+
+projects:
+  - name: argocd
+    description: Root aplikasi GitOps
+  - name: credential
+    description: ConfigMap dan Secret per aplikasi, env, dan site

@@ -1,0 +1,9 @@
+argocdNamespace: openshift-gitops
+repoURL: https://github.com/krismian/nkp-dummy.git
+targetRevision: main
+
+projects:
+  - name: nkp-dummy-dev
+    description: Dummy migrasi OCP ke NKP
+    layers:
+      - backend

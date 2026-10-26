@@ -9,10 +9,17 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{- define "nkp-dummy.labels" -}}
 {{ include "nkp-dummy.selectorLabels" . }}
-app.kubernetes.io/version: {{ .Values.image.tag | quote }}
+app.kubernetes.io/version: {{ .Values.common.image.tag | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- with .Values.environmentname }}
+site: {{ . }}
+{{- end }}
 {{- end -}}
 
-{{- define "nkp-dummy.secretName" -}}
-{{- default (include "nkp-dummy.fullname" .) .Values.secret.existingSecret -}}
+{{- define "nkp-dummy.configMapName" -}}
+{{- printf "configmap-%s-%s" .Release.Name .Values.common.environment -}}
+{{- end -}}
+
+{{- define "nkp-dummy.credentialName" -}}
+{{- printf "secret-%s-%s" .Release.Name .Values.common.environment -}}
 {{- end -}}

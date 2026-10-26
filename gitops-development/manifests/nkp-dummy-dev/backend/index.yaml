@@ -1,0 +1,25 @@
+argocdNamespace: openshift-gitops
+project: nkp-dummy-dev
+app: nkp-dummy
+layer: backend
+
+helm:
+  repoURL: https://github.com/krismian/nkp-dummy.git
+  targetRevision: main
+  pathPrefix: helm-development
+
+# Site memilih cluster tujuan, seperti drc/dc di korporat.
+# nkp memakai nama cluster dari `argocd cluster add ... --name nkp-poc`.
+sites:
+  lab:
+    server: https://kubernetes.default.svc
+  nkp:
+    name: nkp-poc
+
+# Migrasi ke NKP: tambahkan `nkp` ke daftar sites env yang dipindah.
+services:
+  - name: nkp-dummy
+    environments:
+      - name: develop
+        sites:
+          - lab

@@ -1,5 +1,5 @@
-config:
-  PLATFORM: nkp
+route:
+  enabled: false
 
 ingress:
   enabled: true

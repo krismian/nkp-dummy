@@ -1,0 +1,5 @@
+apiVersion: v2
+name: projects-development
+description: AppProject dan Application per proyek, pola projects-development korporat
+type: application
+version: 0.1.0

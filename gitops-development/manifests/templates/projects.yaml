@@ -1,0 +1,47 @@
+{{- range $project := .Values.projects }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ $project.name }}
+  namespace: {{ $.Values.argocdNamespace }}
+spec:
+  description: {{ $project.description | quote }}
+  sourceRepos:
+    - "*"
+  destinations:
+    - server: "*"
+      namespace: "*"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+{{- range $layer := $project.layers }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ printf "%s-%s" $project.name $layer }}
+  namespace: {{ $.Values.argocdNamespace }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: {{ $project.name }}
+  source:
+    repoURL: {{ $.Values.repoURL }}
+    targetRevision: {{ $.Values.targetRevision }}
+    path: {{ printf "gitops-development/manifests/%s/%s" $project.name $layer }}
+    helm:
+      valueFiles:
+        - index.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ $.Values.argocdNamespace }}
+  syncPolicy:
+    automated:
+      allowEmpty: true
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+{{- end }}
+{{- end }}

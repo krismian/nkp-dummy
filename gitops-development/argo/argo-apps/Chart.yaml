@@ -1,0 +1,5 @@
+apiVersion: v2
+name: argo-apps
+description: Root GitOps lab, pola argo-apps di Argo CD korporat
+type: application
+version: 0.1.0

@@ -1,5 +1,6 @@
 .git
 .github
-chart
-gitops
+credentials
+gitops-development
+helm-development
 *.md

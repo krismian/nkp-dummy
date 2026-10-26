@@ -1,6 +1,0 @@
-apiVersion: v2
-name: nkp-dummy
-description: Dummy app untuk simulasi migrasi OCP ke NKP lewat GitOps
-type: application
-version: 0.2.0
-appVersion: "v0.2.0"

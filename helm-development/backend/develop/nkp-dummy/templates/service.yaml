@@ -9,5 +9,5 @@ spec:
     {{- include "nkp-dummy.selectorLabels" . | nindent 4 }}
   ports:
     - name: http
-      port: {{ .Values.service.port }}
+      port: {{ .Values.common.service.port }}
       targetPort: http

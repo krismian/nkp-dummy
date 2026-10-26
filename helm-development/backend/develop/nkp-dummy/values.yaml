@@ -1,0 +1,32 @@
+# Diisi Argo CD dari nama site (lab, nkp), seperti parameter environmentname korporat.
+environmentname: ""
+
+common:
+  environment: develop
+  replicaCount: 1
+  image:
+    repository: ghcr.io/krismian/nkp-dummy
+    tag: v0.2.0
+    pullPolicy: IfNotPresent
+  # Kosong karena ghcr.io public. Di korporat: bpjs-nexus.
+  imagePullSecrets: []
+  service:
+    port: 8080
+  resources:
+    requests:
+      cpu: 50m
+      memory: 32Mi
+    limits:
+      cpu: 200m
+      memory: 64Mi
+
+route:
+  enabled: true
+  host: ""
+
+ingress:
+  enabled: false
+  className: ""
+  host: ""
+  path: /
+  tlsSecretName: ""

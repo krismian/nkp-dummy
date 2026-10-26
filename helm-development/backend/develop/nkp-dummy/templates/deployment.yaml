@@ -4,20 +4,21 @@ metadata:
   name: {{ include "nkp-dummy.fullname" . }}
   labels:
     {{- include "nkp-dummy.labels" . | nindent 4 }}
+  annotations:
+    # ConfigMap dan Secret datang dari Application credential, bukan chart ini,
+    # jadi restart saat isinya berubah diserahkan ke Stakater Reloader.
+    reloader.stakater.com/auto: "true"
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.common.replicaCount }}
   selector:
     matchLabels:
       {{- include "nkp-dummy.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "nkp-dummy.selectorLabels" . | nindent 8 }}
-      annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- include "nkp-dummy.labels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.common.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -28,14 +29,14 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: app
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.common.image.repository }}:{{ .Values.common.image.tag }}"
+          imagePullPolicy: {{ .Values.common.image.pullPolicy }}
           envFrom:
             - configMapRef:
-                name: {{ include "nkp-dummy.fullname" . }}
+                name: {{ include "nkp-dummy.configMapName" . }}
             - secretRef:
-                name: {{ include "nkp-dummy.secretName" . }}
+                name: {{ include "nkp-dummy.credentialName" . }}
           ports:
             - name: http
               containerPort: 8080
@@ -53,4 +54,4 @@ spec:
             capabilities:
               drop: ["ALL"]
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.common.resources | nindent 12 }}

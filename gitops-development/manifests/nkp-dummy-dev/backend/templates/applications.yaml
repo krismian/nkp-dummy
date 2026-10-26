@@ -1,0 +1,44 @@
+{{- range $service := .Values.services }}
+{{- range $env := $service.environments }}
+{{- range $site := $env.sites }}
+{{- $destination := required (printf "site %q belum ada di sites" $site) (index $.Values.sites $site) }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ printf "%s-%s-%s-%s" $.Values.layer $service.name $env.name $site }}
+  namespace: {{ $.Values.argocdNamespace }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: {{ $.Values.project }}
+  source:
+    repoURL: {{ $.Values.helm.repoURL }}
+    targetRevision: {{ $.Values.helm.targetRevision }}
+    path: {{ printf "%s/%s/%s/%s" $.Values.helm.pathPrefix $.Values.layer $env.name $service.name }}
+    helm:
+      releaseName: {{ $service.name }}
+      valueFiles:
+        - values.yaml
+        - {{ printf "values-%s.yaml" $site }}
+      ignoreMissingValueFiles: true
+      parameters:
+        - name: environmentname
+          value: {{ $site }}
+  destination:
+    {{- if $destination.server }}
+    server: {{ $destination.server }}
+    {{- else }}
+    name: {{ $destination.name }}
+    {{- end }}
+    namespace: {{ printf "%s-%s" $.Values.app $env.name }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+{{- end }}
+{{- end }}
+{{- end }}
